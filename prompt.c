@@ -2,7 +2,7 @@
 /**
  * prompt - Entry point
  * Description: 'display prompt'
- * @env: environment variable
+ * @environ: environment variable
  * Return: Always 0 (Success)
  */
 void prompt(char **environ)
