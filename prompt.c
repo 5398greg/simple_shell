@@ -18,8 +18,8 @@ void prompt(char **environ, char argv[])
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, prompt, 2);
+		/*if (isatty(STDIN_FILENO))*/
+		write(STDOUT_FILENO, prompt, 2);
 
 		numc_har = getline(&string, &n, stdin);
 		if (numc_har == -1)
