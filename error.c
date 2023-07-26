@@ -7,7 +7,7 @@
  */
 void error(char *cmdinput)
 {
-	perror("Error ");
+	perror("./hsh ");
 	free(cmdinput);
 	exit(1);
 }

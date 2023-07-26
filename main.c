@@ -6,9 +6,9 @@
  */
 int main(void)
 {
-	int argc = 1;
+	int argc = 0;
 
-	if (argc == 1)
+	if (argc < 1)
 		prompt(environ);
 	return (0);
 }
