@@ -1,42 +1,50 @@
 #include "main.h"
 /**
  * prompt - Entry point
- * Description: 'display prompt'
- * @environ: environment variable
- * Return: Always 0 (Success)
+ * Description: 'we try'
+ * @environ: 'environment variable'
+ * Return: void
  */
 void prompt(char **environ)
 {
-	char *prompt = "$ ", *cmdinput = NULL;
-	size_t n;
+	char *string = NULL, *prompt = "$ ";
 	int i, status;
-	pid_t bytes;
-	char *arg[] = {NULL, NULL};
-	bool frompipe = false;
+	ssize_t numc_har;
+	pid_t child_pid;
 
-	while (!frompipe)
+	size_t n = 0;
+	char *argv[] = {NULL, NULL};
+
+	while (1)
 	{
-		if (isatty(STDIN_FILENO) == 0)
-			frompipe = true;
-		write(STDOUT_FILENO, prompt, 2);
-		if (getline(&cmdinput, &n, stdin) == -1)
-			error(cmdinput);
-		i = 0;
-		while (cmdinput[i])
+		if (isatty(STDIN_FILENO))
+			write(STDOUT_FILENO, prompt, 2);
+
+		numc_har = getline(&string, &n, stdin);
+		if (numc_har == -1)
 		{
-			if (cmdinput[i] == '\n')
-				cmdinput[i] = '\0';
+			error(string);
+		}
+		i = 0;
+		while (string[i])
+		{
+			if (string[i] == '\n')
+			string[i] = '\0';
 			i++;
 		}
-		arg[0] = cmdinput;
-		bytes = fork();
-		if (bytes == -1)
+		argv[0] = string;
+		child_pid = fork();
+		if (child_pid == -1)
 		{
-			error(cmdinput);
+			error(string);
 		}
-		else if (bytes == 0)
-		if (execve(arg[0], arg, environ) == -1)
-			error(cmdinput);
+		if (child_pid == 0)
+		{
+			if (execve(argv[0], argv, environ) == -1)
+			{
+				error(string);
+			}
+		} else
 		wait(&status);
 	}
 }
