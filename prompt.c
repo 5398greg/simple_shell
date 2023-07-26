@@ -45,7 +45,9 @@ void prompt(char **environ, char argv[])
 			{
 				error(string, argv);
 			}
-		} else
-		wait(&status);
+		}
+		if (child_pid > 0)
+			wait(&status);
 	}
+	free(string);
 }
