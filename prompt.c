@@ -8,7 +8,7 @@
  */
 void prompt(char **environ, char argv[])
 {
-	char *string = NULL, *prompt = "$ ";
+	char *string = NULL, *prompt = "#cisfun$ ";
 	int i, status;
 	ssize_t numc_har;
 	pid_t child_pid;
