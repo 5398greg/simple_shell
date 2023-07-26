@@ -12,9 +12,12 @@ void prompt(char **environ)
 	int i, status;
 	pid_t bytes;
 	char *arg[] = {NULL, NULL};
+	bool frompipe = false;
 
-	while (1)
+	while (!frompipe)
 	{
+		if (isatty(STDIN_FILENO) == 0)
+			frompipe = true;
 		write(STDOUT_FILENO, prompt, 2);
 		if (getline(&cmdinput, &n, stdin) == -1)
 			error(cmdinput);

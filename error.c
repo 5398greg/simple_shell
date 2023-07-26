@@ -9,5 +9,5 @@ void error(char *cmdinput)
 {
 	perror("Error ");
 	free(cmdinput);
-	exit(EXIT_FAILURE);
+	exit(1);
 }
