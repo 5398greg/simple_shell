@@ -2,13 +2,13 @@
 /**
  * main - Entry point
  * Description: 'the shell programme'
+ * @argc: arguemnt count
+ * @argv: arguement vector
  * Return: Always 0 (Success)
  */
-int main(void)
+int main(int argc, char *argv[])
 {
-	int argc = 0;
-
-	if (argc < 1)
-		prompt(environ);
+	if (argc >= 1)
+		prompt(environ, argv[0]);
 	return (0);
 }

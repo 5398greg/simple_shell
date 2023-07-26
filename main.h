@@ -10,7 +10,7 @@
 #include <stdbool.h>
 
 extern char **environ;
-void prompt(char **environ);
-void error(char *cmdinput);
+void prompt(char **environ, char argv[]);
+void error(char *cmdinput, char argv[]);
 
 #endif

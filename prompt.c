@@ -3,9 +3,10 @@
  * prompt - Entry point
  * Description: 'we try'
  * @environ: 'environment variable'
+ * @argv: 'arguement vector'
  * Return: void
  */
-void prompt(char **environ)
+void prompt(char **environ, char argv[])
 {
 	char *string = NULL, *prompt = "$ ";
 	int i, status;
@@ -13,7 +14,7 @@ void prompt(char **environ)
 	pid_t child_pid;
 
 	size_t n = 0;
-	char *argv[] = {NULL, NULL};
+	char *argv1[] = {NULL, NULL};
 
 	while (1)
 	{
@@ -23,7 +24,7 @@ void prompt(char **environ)
 		numc_har = getline(&string, &n, stdin);
 		if (numc_har == -1)
 		{
-			error(string);
+			error(string, argv);
 		}
 		i = 0;
 		while (string[i])
@@ -32,17 +33,17 @@ void prompt(char **environ)
 			string[i] = '\0';
 			i++;
 		}
-		argv[0] = string;
+		argv1[0] = string;
 		child_pid = fork();
 		if (child_pid == -1)
 		{
-			error(string);
+			error(string, argv);
 		}
 		if (child_pid == 0)
 		{
-			if (execve(argv[0], argv, environ) == -1)
+			if (execve(argv1[0], argv1, environ) == -1)
 			{
-				error(string);
+				error(string, argv);
 			}
 		} else
 		wait(&status);
