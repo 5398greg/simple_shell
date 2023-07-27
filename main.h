@@ -10,7 +10,9 @@
 #include <stdbool.h>
 
 extern char **environ;
-void prompt(char **environ, char argv[]);
+void prompt(char **environ);
 void error(char *cmdinput, char argv[]);
+void execute_command(char *command, char **environ);
+char *read_input(int *is_interactive);
 
 #endif
