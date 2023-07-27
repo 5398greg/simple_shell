@@ -1,5 +1,21 @@
 #include "main.h"
 /**
+ * custom_strcmp - Entry point
+ * Description: 'compares two strings'
+ * @str1: string to compare
+ * @str2: string to compare
+ * Return: Always 0 (Success)
+ */
+int custom_strcmp(const char *str1, const char *str2)
+{
+	while (*str1 && (*str1 == *str2))
+	{
+		str1++;
+		str2++;
+	}
+	return (*(unsigned char *)str1 - *(unsigned char *)str2);
+}
+/**
  * read_input - Entry point
  * Description: 'to read input and know whether its piped'
  * @is_interactive: just an integer pointer
@@ -100,8 +116,14 @@ void prompt(char **environ)
 
 	if (is_interactive && command[0] != '\0')
 	{
+		if (custom_strcmp(command, "exit") == 0)
+		{
+			free(command);
+			break;
+		}
+
 		execute_command(command, environ);
 	}
+	free(command);
 	}
 }
-
