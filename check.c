@@ -2,7 +2,7 @@
 /**
  * is_absolute - Entry point
  * Description: 'to check if it is absolute or relative'
- * @ check: command to be checked
+ * @check: command to be checked
  * Return: Always 0 (Success)
  */
 int is_absolute(char *check)

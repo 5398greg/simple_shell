@@ -68,6 +68,7 @@ void execute_command(char *command, char **environ)
 /**
  * prompt - a normal function
  * @environ: exernal environment variable
+ * @frompipe: is it piped?
  * Return: void
  */
 void prompt(char **environ, bool frompipe)
