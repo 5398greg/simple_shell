@@ -12,6 +12,8 @@
 #define BUFFER_SIZE 1024
 
 extern char **environ;
+void exec_absolute(char *string, char **environ);
+int is_absolute(char *check);
 void prompt(char **environ);
 void execute_command(char *command, char **environ);
 int custom_strcmp(const char *str1, const char *str2);

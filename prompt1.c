@@ -81,6 +81,7 @@ void prompt(char **environ)
 		size_t n = 0;
 		ssize_t numc_har;
 		int is_interactive, fd = fileno(stdin);
+		int j;
 
 		is_interactive = isatty(fd);
 
@@ -96,6 +97,12 @@ void prompt(char **environ)
 			perror("getline");
 			free(string);
 			string = NULL;
+		}
+		j = is_absolute(string);
+		if(j)
+		{
+			exec_absolute(string, environ);
+			continue;
 		}
 		if (string[numc_har - 1] == '\n')
 			string[numc_har - 1] = '\0';
