@@ -6,6 +6,8 @@
  */
 int main(void)
 {
-	prompt(environ);
+	bool frompipe = false;
+
+	prompt(environ, frompipe);
 	return (0);
 }

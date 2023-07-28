@@ -66,40 +66,32 @@ void execute_command(char *command, char **environ)
 	free_args(args);
 }
 /**
- * prompt - Entry point
- * Description: 'runs the prompt'
+ * prompt - a normal function
  * @environ: exernal environment variable
  * Return: void
  */
-void prompt(char **environ)
+void prompt(char **environ, bool frompipe)
 {
-	bool frompipe = false;
-
 	while (!frompipe)
 	{
 		char *string = NULL;
 		size_t n = 0;
 		ssize_t numc_har;
-		int is_interactive, fd = fileno(stdin);
-		int j;
+		int fd = fileno(stdin);
 
-		is_interactive = isatty(fd);
-
-		if (is_interactive)
+		if (isatty(fd) == 1)
 		{
 			write(STDOUT_FILENO, "$ ", 2);
 			numc_har = getline(&string, &n, stdin);
 		} else
 			frompipe = true;
-
 		if (numc_har == -1)
 		{
 			perror("getline");
 			free(string);
 			string = NULL;
 		}
-		j = is_absolute(string);
-		if(j)
+		if (is_absolute(string) == 1)
 		{
 			exec_absolute(string, environ);
 			continue;
@@ -115,7 +107,6 @@ void prompt(char **environ)
 				free(string);
 				break;
 			}
-
 			execute_command(string, environ);
 		}
 		free(string);

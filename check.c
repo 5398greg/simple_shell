@@ -30,14 +30,14 @@ void exec_absolute(char *string, char **environ)
 		string[numc_har - 1] = '\0';
 
 	pid = fork();
-	if (pid == - 1)
+	if (pid == -1)
 	{
 		perror("fork");
 		return;
 	}
 	if (pid == 0)
 	{
-		if (execve(string, args, environ) == - 1)
+		if (execve(string, args, environ) == -1)
 		{
 			perror("execve");
 			exit(EXIT_FAILURE);
