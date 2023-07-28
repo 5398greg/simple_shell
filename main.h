@@ -15,7 +15,6 @@ extern char **environ;
 void prompt(char **environ);
 void execute_command(char *command, char **environ);
 int custom_strcmp(const char *str1, const char *str2);
-char *read_input(int *is_interactive);
 char **tokenize_input(char *command);
 void free_args(char **args);
 char *find_full_path(char *command);

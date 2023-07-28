@@ -87,8 +87,9 @@ char *find_full_path(char *command)
 	char *dir = NULL, *path_env = custom_getenv_or_error("PATH");
 	char *full_path = NULL;
 	int flag = 0;
+	char *path_env_copy = custom_strdup(path_env);
 
-	dir = strtok(path_env, ":");
+	dir = strtok(path_env_copy, ":");
 
 	while (dir != NULL)
 	{
@@ -115,10 +116,10 @@ char *find_full_path(char *command)
 			break;
 		}
 		free(full_path);
-		full_path = NULL;
+		full_path[dir_len] = '0';
 		dir = strtok(NULL, ":");
 	}
-	free(path_env);
+	free(path_env_copy);
 	if (flag)
 		return (full_path);
 	return (NULL);

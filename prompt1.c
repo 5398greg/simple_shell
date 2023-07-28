@@ -16,39 +16,6 @@ int custom_strcmp(const char *str1, const char *str2)
 	return (*(unsigned char *)str1 - *(unsigned char *)str2);
 }
 /**
- * read_input - Entry point
- * Description: 'to read input and know whether its piped'
- * @is_interactive: just an integer pointer
- * Return: string
- */
-char *read_input(int *is_interactive)
-{
-	char *string = NULL;
-	size_t n = 0;
-	ssize_t numc_har;
-	int fd = fileno(stdin);
-
-	*is_interactive = isatty(fd);
-
-	if (*is_interactive)
-	{
-		write(STDOUT_FILENO, "$ ", 2);
-		numc_har = getline(&string, &n, stdin);
-	} else
-		return (NULL);
-
-	if (numc_har == -1)
-	{
-		perror("getline");
-		free(string);
-		string = NULL;
-	}
-	if (string[numc_har - 1] == '\n')
-		string[numc_har - 1] = '\0';
-
-	return (string);
-}
-/**
  * execute_command - Entry point
  * Description: 'executes the command with execve'
  * @command: command entered
@@ -75,7 +42,7 @@ void execute_command(char *command, char **environ)
 
 	if (full_path == NULL)
 	{
-		perror(args[0]);
+		fprintf(stderr, "%s: command not found\n", args[0]);
 		free_args(args);
 		return;
 	}
@@ -83,7 +50,7 @@ void execute_command(char *command, char **environ)
 	if (child_pid == -1)
 	{
 		perror("fork");
-		free(full_path), free(args);
+		free(full_path), free_args(args);
 		return;
 	}
 	if (child_pid == 0)
@@ -106,24 +73,44 @@ void execute_command(char *command, char **environ)
  */
 void prompt(char **environ)
 {
-	while (1)
+	bool frompipe = false;
+	while (!frompipe)
 	{
+		char *string = NULL;
+		size_t n = 0;
+		ssize_t numc_har;
 		int is_interactive;
-		char *command = NULL;
+		int fd = fileno(stdin);
 
-		command = read_input(&is_interactive);
-		if (command == NULL)
-			continue;
-		if (is_interactive && command[0] != '\0')
+		is_interactive = isatty(fd);
+
+		if (is_interactive)
 		{
-			if (custom_strcmp(command, "exit") == 0)
+			write(STDOUT_FILENO, "$ ", 2);
+			numc_har = getline(&string, &n, stdin);
+		} else
+			frompipe = true;
+
+		if (numc_har == -1)
+		{
+			perror("getline");
+			free(string);
+			string = NULL;
+		}
+		if (string[numc_har - 1] == '\n')
+			string[numc_har - 1] = '\0';
+		if (string == NULL)
+			continue;
+		if (string[0] != '\0')
+		{
+			if (custom_strcmp(string, "exit") == 0)
 			{
-				free(command);
+				free(string);
 				break;
 			}
 
-			execute_command(command, environ);
+			execute_command(string, environ);
 		}
-		free(command);
+		free(string);
 	}
 }
