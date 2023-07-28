@@ -26,27 +26,25 @@ char *read_input(int *is_interactive)
 	char *string = NULL;
 	size_t n = 0;
 	ssize_t numc_har;
+	int fd = fileno(stdin);
 
-	*is_interactive = isatty(STDIN_FILENO);
+	*is_interactive = isatty(fd);
 
 	if (*is_interactive)
 	{
 		write(STDOUT_FILENO, "$ ", 2);
 		numc_har = getline(&string, &n, stdin);
 	} else
-	{
-		numc_har = getline(&string, &n, stdin);
-	}
+		return (NULL);
 
 	if (numc_har == -1)
 	{
 		perror("getline");
 		free(string);
 		string = NULL;
-	} else
-	{
-		string[numc_har - 1] = '\0';
 	}
+	if (string[numc_har - 1] == '\n')
+		string[numc_har - 1] = '\0';
 
 	return (string);
 }
@@ -59,42 +57,46 @@ char *read_input(int *is_interactive)
  */
 void execute_command(char *command, char **environ)
 {
-	char **argv1 = malloc(2 * (sizeof(char *)));
-	pid_t child_pid;
+	char **args = NULL, *full_path = NULL;
 	int status;
+	pid_t child_pid;
 
-	if (argv1 == NULL)
+	args = tokenize_input(command);
+	if (args == NULL)
+		return;
+
+	if (is_builtin(args[0]))
 	{
-		perror("malloc");
-		free(command);
-		exit(EXIT_FAILURE);
+		handle_builtin(args[0]);
+		free_args(args);
+		return;
 	}
-	argv1[0] = command;
-	argv1[1] = NULL;
+	full_path = find_full_path(args[0]);
 
+	if (full_path == NULL)
+	{
+		perror(args[0]);
+		free_args(args);
+		return;
+	}
 	child_pid = fork();
 	if (child_pid == -1)
 	{
 		perror("fork");
-		free(argv1);
-		free(command);
-		exit(EXIT_FAILURE);
+		free(full_path), free(args);
+		return;
 	}
 	if (child_pid == 0)
 	{
-		if (execve(command, argv1, environ) == -1)
+		if (execve(full_path, args, environ) == -1)
 		{
 			perror("execve");
-			free(argv1);
-			free(command);
 			exit(EXIT_FAILURE);
 		}
 	} else
-	{
-		wait(&status);
-	}
-	free(argv1);
-	free(command);
+		waitpid(child_pid, &status, 0);
+	free(full_path);
+	free_args(args);
 }
 /**
  * prompt - Entry point
@@ -107,23 +109,21 @@ void prompt(char **environ)
 	while (1)
 	{
 		int is_interactive;
-		char *command = read_input(&is_interactive);
+		char *command = NULL;
 
+		command = read_input(&is_interactive);
 		if (command == NULL)
+			continue;
+		if (is_interactive && command[0] != '\0')
 		{
-			break;
-		}
+			if (custom_strcmp(command, "exit") == 0)
+			{
+				free(command);
+				break;
+			}
 
-	if (is_interactive && command[0] != '\0')
-	{
-		if (custom_strcmp(command, "exit") == 0)
-		{
-			free(command);
-			break;
+			execute_command(command, environ);
 		}
-
-		execute_command(command, environ);
-	}
-	free(command);
+		free(command);
 	}
 }
