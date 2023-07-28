@@ -80,7 +80,7 @@ void prompt(char **environ)
 		char *string = NULL;
 		size_t n = 0;
 		ssize_t numc_har;
-		int is_interactive, int fd = fileno(stdin);
+		int is_interactive, fd = fileno(stdin);
 
 		is_interactive = isatty(fd);
 
